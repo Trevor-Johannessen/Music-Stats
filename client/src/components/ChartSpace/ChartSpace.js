@@ -14,7 +14,7 @@ import { color } from '@mui/system';
 */
 const ChartSpace = (props) => {
     const [chart, setChart] = useState(null);
-    const [shadow, setShadow] = useState('#e1e2d7');
+    const [shadow, setShadow] = useState(['#e1e2d7', '']); // current and previous colors stored
 
 
 
@@ -25,17 +25,19 @@ const ChartSpace = (props) => {
 
     function handleDragEnter(event) {
         event.preventDefault();
-        setShadow('#0ff')
+        let chartColor = event.dataTransfer.getData('chartColor');
+        setShadow([chartColor, shadow[0]])
     }
 
     function handleDragLeave(event) {
         event.preventDefault();
-        setShadow('#e1e2d7')
+        setShadow([shadow[1], shadow[0]])
     }
 
     function handleDrop(event) {
         event.preventDefault();
-        setShadow('#e1e2d7') // Change this to new chart color later
+        let chartColor = event.dataTransfer.getData('chartColor');
+        setShadow([chartColor, shadow[0]]) // Change this to new chart color later
     }
 
     return (
@@ -46,7 +48,7 @@ const ChartSpace = (props) => {
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            style={{boxShadow: `-10px 5px 5px ${shadow}`}}
+            style={{boxShadow: `-10px 5px 5px ${shadow[0]}`}}
         >
         </div>
     )
