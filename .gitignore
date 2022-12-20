@@ -1,0 +1,4 @@
+server/__pycache__
+server/myvenv
+server/test.py
+server/Song_Stats_Export.csv
