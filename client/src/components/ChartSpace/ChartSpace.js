@@ -12,18 +12,41 @@ import { color } from '@mui/system';
             -When dragging a chart over a chartspace, the chartspace will change its shadow to be color coded with the dragging chart
             -When the dragged object leaves the chartspace, the chartspace shadow will be color coded with the chart it is holding 
 */
-const ChartSpace = () => {
-    const [chart, setchart] = useState(null);
-    let shadowColor = '#0ff';
+const ChartSpace = (props) => {
+    const [chart, setChart] = useState(null);
+    const [shadow, setShadow] = useState('#e1e2d7');
 
 
 
+    function handleDragOver(event) {
+        event.preventDefault();
+        
+    }
 
+    function handleDragEnter(event) {
+        event.preventDefault();
+        setShadow('#0ff')
+    }
+
+    function handleDragLeave(event) {
+        event.preventDefault();
+        setShadow('#e1e2d7')
+    }
+
+    function handleDrop(event) {
+        event.preventDefault();
+        setShadow('#e1e2d7') // Change this to new chart color later
+    }
 
     return (
         <div 
             id = 'chart-space'
-            style={{boxShadow: `-10px 5px 5px ${shadowColor}`}}
+            draggable='true'
+            onDragOver={handleDragOver}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            style={{boxShadow: `-10px 5px 5px ${shadow}`}}
         >
         </div>
     )

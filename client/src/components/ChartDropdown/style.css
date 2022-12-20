@@ -1,0 +1,28 @@
+#chart-dropdown{
+    position:absolute;
+    background-color:#f8f9ed;
+    border-color:black;
+    border-style:solid;
+    border-radius:0px 0px 20px 20px;
+    border-width:0px 2px 2px 2px;
+    overflow-y: scroll;
+    right:0vw;
+    top:7vh;
+    display:flex;
+    flex-direction:column;
+    width:8%;
+    max-height:85%;
+    padding-bottom:1vh;
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+#chart-dropdown::-webkit-scrollbar {
+    display: none;
+}
+
+.chart-svg{
+    margin-top:2vh;
+
+}
