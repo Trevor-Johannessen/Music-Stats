@@ -1,3 +1,4 @@
+client/node_modules
 server/__pycache__
 server/myvenv
 server/test.py
