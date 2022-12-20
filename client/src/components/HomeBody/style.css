@@ -1,10 +1,10 @@
 #homebody{
     background-color:#e1e2d7;
     position: absolute;
-    width: 80%;
-    height: 90%;
-    top: 5%;
-    left: 10%;
+    width: 80vw;
+    height: 90vh;
+    top: 5vh;
+    left: 10vw;
     border-style:solid;
     border-color:black;
     border-radius:15px;
