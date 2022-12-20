@@ -1,8 +1,12 @@
 import './App.css';
 import HomeBody from './components/HomeBody/HomeBody'
+import { GlobalStoreContextProvider } from './store'
+
 function App() {
   return (
-    <HomeBody/>
+    <GlobalStoreContextProvider>
+      <HomeBody/>
+    </GlobalStoreContextProvider>
   );
 }
 

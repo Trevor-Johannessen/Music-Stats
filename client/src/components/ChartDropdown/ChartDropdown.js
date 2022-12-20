@@ -15,7 +15,7 @@ const ChartDropdown = () => {
                 src={BarIcon} 
                 alt="Bar Chart"
                 draggable='true'
-                onDragStart={(event) => handleDragStart(event, "#ffffff")}
+                onDragStart={(event) => handleDragStart(event, "#ff0000")}
             />
             <img 
                 className="chart-svg"

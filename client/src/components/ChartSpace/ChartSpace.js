@@ -1,6 +1,5 @@
 import './style.css';
 import React, { useState } from 'react';
-import { color } from '@mui/system';
 
 /*
     ChartSpace:
@@ -43,7 +42,6 @@ const ChartSpace = (props) => {
     return (
         <div 
             id = 'chart-space'
-            draggable='true'
             onDragOver={handleDragOver}
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
