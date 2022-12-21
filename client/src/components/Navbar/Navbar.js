@@ -8,15 +8,16 @@ import { GlobalStoreContext } from '../../store'
 const Navbar = () => {
     const { store } = useContext(GlobalStoreContext);
 
-    function toggleSettings(event){
-        event.stopPropagation();
-    }
-
     function toggleDropdown(event){
         event.stopPropagation();
         store.toggleDropdown();
     }
-
+    
+    function toggleSettings(event){
+        event.stopPropagation();
+        store.toggleSettings();
+    }
+    
 
 
 

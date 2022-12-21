@@ -6,14 +6,16 @@ export const GlobalStoreContext = createContext({});
 // THESE ARE ALL THE TYPES OF UPDATES TO OUR GLOBAL
 // DATA STORE STATE THAT CAN BE PROCESSED
 export const GlobalStoreActionType = {
-    TOGGLE_DROPDOWN: "TOGGLE_DROPDOWN"
+    TOGGLE_DROPDOWN: "TOGGLE_DROPDOWN",
+    TOGGLE_SETTINGS: "TOGGLE_SETTINGS",
 }
 
 
 function GlobalStoreContextProvider(props) {
     // THESE ARE ALL THE THINGS OUR DATA STORE WILL MANAGE
     const [store, setStore] = useState({
-        dropdownEnabled: false
+        dropdownEnabled: false,
+        settingsEnabled: false,
     });
 
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
@@ -21,10 +23,16 @@ function GlobalStoreContextProvider(props) {
     const storeReducer = (action) => {
         const { type, payload } = action;
         switch (type) {
-            // LIST UPDATE OF ITS NAME
             case GlobalStoreActionType.TOGGLE_DROPDOWN: {
                 return setStore({
-                    dropdownEnabled: !store.dropdownEnabled
+                    dropdownEnabled: !store.dropdownEnabled,
+                    settingsEnabled: store.settingsEnabled
+                });
+            }
+            case GlobalStoreActionType.TOGGLE_SETTINGS: {
+                return setStore({
+                    dropdownEnabled: store.dropdownEnabled,
+                    settingsEnabled: !store.settingsEnabled
                 });
             }
             
@@ -40,6 +48,11 @@ function GlobalStoreContextProvider(props) {
                 });
     }
 
+    store.toggleSettings = () => {
+        storeReducer({
+                    type: GlobalStoreActionType.TOGGLE_SETTINGS
+                });
+    }
 
 
 

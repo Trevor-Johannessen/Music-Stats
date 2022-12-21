@@ -1,0 +1,18 @@
+#page-settings{
+    width:25vw;
+    height:30vh;
+    background-color:#f8f9ed;
+    border-color:black;
+    border-style:solid;
+    border-width:3px;
+    border-radius:20px;
+    position:absolute;
+    right:7vw;
+    top:7.5vh;
+}
+
+#settings-title{
+    margin-left:3.5%;
+    font-size:2vh;
+
+}
