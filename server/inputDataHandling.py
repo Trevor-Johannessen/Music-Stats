@@ -29,6 +29,7 @@ def handleSongStatsData(myCursor):
     df = df.drop(columns=['persistentID','persistentArtist','persistentAlbum','persistentGenre','dateID','Plays (as of date)', 'Skips (as of date)'])
     df = df[df['Date'] != "Sep 23, 2021 at 10:45:47 PM"]
     df['Date'] = pd.to_datetime(df['Date'])
+
     df = df[(df['Date'] > lastUpdate)]
     #df.to_csv('./output.csv', index=False) 
 
@@ -48,11 +49,12 @@ def parseITunesData(myCursor):
     songDict = {} 
     albumDict = {}  
     artistDict = {}
+    genreDict = {}
     def handleITunesData():
         with open('iTunesSongData.csv', 'r') as file:
             csvReader = reader(file)
             for song in csvReader:
-                if song[0] == 'Title' and song[2] == 'Album Artist' and song[3] == 'Album' or song[1] == '': # ignore headers or if time is empty (song hasn't released yet)
+                if song[0] == 'Title' and song[2] == 'Album Artist' and song[3] == 'Album' or song[1] == '' or song[4] == '': # ignore headers or if time is empty (song hasn't released yet)
                     continue
                 if song[2] == '': # some songs dont have album artist, so just fill it in with artist
                     song[2] = song[10]
@@ -89,10 +91,11 @@ def parseITunesData(myCursor):
                 albumKey = f'{song[2]}+{song[3]}' # key = artist+album
                 if albumKey not in albumDict:
                     createAlbum(albumKey, song[3], song[2], song[7], myCursor)
-
+                if song[4] not in genreDict:
+                    createGenre(song[4], myCursor)
 
                 # song array format: [title, artistPrimaryKey, albumPrimaryKey, genre, length, dateReleased, dateAdded]
-                createSong(song[0], artistDict[song[2]][0], albumDict[albumKey][0], song[4], song[1], song[7], song[8], songKey, myCursor)
+                createSong(song[0], artistDict[song[2]][0], albumDict[albumKey][0], genreDict[song[4]][0], song[1], song[7], song[8], songKey, myCursor)
 
     def createSong(title, artistId, albumId, genre, length, date_released, date_added, songKey, myCursor):
         # Check if song is already in database
@@ -136,6 +139,23 @@ def parseITunesData(myCursor):
             artistId = sqlConnector.getArtist(myCursor, artist)[0][0]
             # Add artist to dict
             artistDict[artist] = [artistId, artist]
+
+    def createGenre(genre, myCursor):
+        if genre != '':
+            genreQuery = sqlConnector.getGenre(myCursor, genre)
+            if len(genreQuery) > 0:
+                genreDict[genre] = [genreQuery[0][0], genre]
+                return
+            # Add genre to database
+            sqlConnector.addGenre(myCursor, genre)
+
+            # Get genre from database
+            genreId = sqlConnector.getGenre(myCursor, genre)[0][0]
+            # Add genre to dict
+            genreDict[genre] = [genreId, genre]
+
+
+
 
     handleITunesData()
     return (songDict, albumDict, artistDict)

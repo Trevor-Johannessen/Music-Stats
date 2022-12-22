@@ -35,7 +35,7 @@ def initalizeTables(mycursor):
         title VARCHAR(255),
         artist INT,
         album INT,
-        genre VARCHAR(255),
+        genre INT,
         date_released DATE,
         date_added DATE,
         length TIME,
@@ -47,7 +47,7 @@ def initalizeTables(mycursor):
     # album array format: [albumPrimaryKey, name, artistPrimaryKey, release date]
     mycursor.execute("""CREATE TABLE IF NOT EXISTS albums(
         id INT AUTO_INCREMENT,
-        title VARCHAR(255),
+        name VARCHAR(255),
         artist INT,
         date_released DATE,
         PRIMARY KEY (id)
@@ -64,6 +64,21 @@ def initalizeTables(mycursor):
         )"""
     )
 
+    mycursor.execute("""CREATE TABLE IF NOT EXISTS genres(
+        id INT AUTO_INCREMENT,
+        name VARCHAR(255),
+        PRIMARY KEY (id)
+        )"""
+    )
+
+    mycursor.execute(f"""CREATE TABLE IF NOT EXISTS lastupdated(
+        date DATETIME
+        );
+    """)
+    mycursor.execute(f"""
+    INSERT INTO lastupdated (date) VALUES ('2001/11/22 00:00:00');
+    """)
+
     # INITALIZE UPDATE TABLE
     # update array format: [updatePrimaryKey, timestamp]
 
@@ -73,7 +88,7 @@ def getLastUpdate(cursor):
         result = cursor.fetchall()[0][0]
         return datetime(result.year, result.month, result.day, 0, 0, 0)
     except:
-        return datetime(2101, 11, 22, 0, 0, 0)
+        return datetime(2100, 0, 0, 0, 0, 0)
 
 def createNewUpdate(cursor, newDatetime):
     cursor.execute(f"""
@@ -88,11 +103,11 @@ def createNewUpdate(cursor, newDatetime):
     """)
 
 # ADD SONG TO songs TABLE
-def addSong(cursor, title, artistId, albumId, genre, length, date_released, date_added):
+def addSong(cursor, title, artistId, albumId, genreId, length, date_released, date_added):
     cursor.execute(f"""INSERT INTO songs
     (title, artist, album, genre, length, date_released, date_added)
     VALUES
-    ('{title}', {artistId}, {albumId}, '{genre}', '0:{length}', {date_released}, {date_added})
+    ('{title}', {artistId}, {albumId}, {genreId}, '0:{length}', {date_released}, {date_added})
     """)
 
 def getSong(cursor, title, artistId, albumId):
@@ -111,7 +126,7 @@ def getSongByString(cursor, title, artist, album):
     cursor.execute(f"""
     SELECT id
     FROM songs 
-    WHERE album IN (SELECT id FROM albums WHERE title = '{album}')
+    WHERE album IN (SELECT id FROM albums WHERE name = '{album}')
     AND artist IN (SELECT id FROM artists WHERE name = '{artist}')
     AND title = '{title}'
     """)
@@ -129,14 +144,14 @@ def getAllSongs(cursor):
 
 def addAlbum(cursor, albumName, albumArtist, albumRelease):
     cursor.execute(f"""INSERT INTO albums
-    (title, artist, date_released)
+    (name, artist, date_released)
     VALUES
     ('{albumName}', {albumArtist}, {albumRelease})
     """)
 
 def getAlbum(cursor, albumName, albumArtist):
     cursor.execute(f"""SELECT id FROM albums WHERE 
-    title = '{albumName}' AND
+    name = '{albumName}' AND
     artist = {albumArtist}
     """)
     result = cursor.fetchall()
@@ -163,6 +178,19 @@ def getArtist(cursor, artist):
 
 def getAllArtists(cursor):
     cursor.execute(f"""SELECT * FROM artists""")
+    result = cursor.fetchall()
+    return result
+
+def addGenre(cursor, genre):
+    cursor.execute(f"""INSERT INTO genres
+    (name)
+    VALUES
+    ('{genre}')
+    """)
+
+def getGenre(cursor, genre):
+    cursor.execute(f"""SELECT id FROM genres WHERE name = '{genre}'
+    """)
     result = cursor.fetchall()
     return result
 
