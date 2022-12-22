@@ -1,8 +1,8 @@
 import './style.css';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { chartColors } from '../../store';
 import BarChart from '../../charts/BarChart/BarChart';
-
+import { GlobalDataContext } from '../../dataContext'
 /*
     ChartSpace:
         This component will hold d3 charts for display
@@ -16,6 +16,8 @@ import BarChart from '../../charts/BarChart/BarChart';
 const ChartSpace = (props) => {
     const [chart, setChart] = useState('');
     const [shadow, setShadow] = useState(['#e1e2d7', '']); // current and previous colors stored
+    const [chartSettings, setChartSettings] = useState({xValue : "", yValue : "", options : []})
+    const { data } = useContext(GlobalDataContext);
 
     const ref = useRef(null);
     let width = ref.current ? ref.current.offsetWidth : 0
@@ -43,11 +45,19 @@ const ChartSpace = (props) => {
         event.preventDefault();
         let chartType = event.dataTransfer.getData('chartType');
         let chartColor = chartColors[chartType];
+        
         console.log(`width = ${width}`)
         console.log(`height = ${height}`)
-        setChart(<BarChart width={width} height={height}/>)
+        
+        switch(chartType){
+            case 'BARCHART':
+                let newChart = (<BarChart width={width} height={height} settings={{xValue : "albums", yValue : "plays", options : []}}/>)
+                setChart(newChart)
+                // setChart(<BarChart width={width} height={height} settings={chartSettings}/>)
+                break;
+        }
+        
         setShadow([chartColor, shadow[0]]) // Change this to new chart color later
-
     }
 
     return (

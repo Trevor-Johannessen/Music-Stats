@@ -3,8 +3,6 @@ import React, { useState } from 'react';
 
 
 const PageSettings = (props) => {
-    const [chart, setChart] = useState(null);
-    const [shadow, setShadow] = useState(['#e1e2d7', '']); // current and previous colors stored
 
 
 

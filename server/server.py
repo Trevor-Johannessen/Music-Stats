@@ -71,7 +71,7 @@ def createQuery(xValue, yValue, filters=[]):
     return f"SELECT {selector} FROM (((songs CROSS JOIN artists ON songs.artist=artists.id) CROSS JOIN albums ON songs.album=albums.id) CROSS JOIN genres ON songs.genre=genres.id) {addedCrossTable} {filterString}"
 
 
-@app.route("/bar-chart/")
+@app.route("/api/bar-chart/", methods=['PUT'])
 def barChart():
     # Return error message on empty payload
     if(request.data == b''):
@@ -102,7 +102,10 @@ def barChart():
                 valuesDict[name] += 1
             else:
                 valuesDict[name] = 1
-        return json.dumps(valuesDict)
+        valuesArr = []
+        for key in valuesDict:
+            valuesArr.append({'x' : key, 'y' : valuesDict[key]})
+        return json.dumps(valuesArr)
 
     if body['yValue'] == 'length':
         index=0
@@ -118,15 +121,16 @@ def barChart():
                 valuesDict[name].append(value[3])
             else:
                 valuesDict[name] = [value[3]]
-        averageDict = {}
+        averageArr = []
         for key in valuesDict:
             totalTime = 0
             for time in valuesDict[key]:
                 totalTime += time.total_seconds()
-            averageDict[key] = totalTime / len(valuesDict[key])
-        return json.dumps(averageDict)
+            averageArr.append({'x' : key, 'y' : totalTime / len(valuesDict[key])})
+        return json.dumps(averageArr)
 
 
 
 if __name__ == "__main__":
+    app.debug = True
     app.run()

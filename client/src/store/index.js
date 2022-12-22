@@ -16,6 +16,7 @@ export const chartColors = {
 }
 
 
+// THIS WILL STORE THE PAGE SETINGS
 function GlobalStoreContextProvider(props) {
     // THESE ARE ALL THE THINGS OUR DATA STORE WILL MANAGE
     const [store, setStore] = useState({
