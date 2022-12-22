@@ -1,116 +1,126 @@
-// Copyright 2021 Observable, Inc.
-// Released under the ISC license.
-// https://observablehq.com/@d3/stacked-bar-chart
-function StackedBarChart(data, {
-  x = (d, i) => i, // given d in data, returns the (ordinal) x-value
-  y = d => d, // given d in data, returns the (quantitative) y-value
-  z = () => 1, // given d in data, returns the (categorical) z-value
-  title, // given d in data, returns the title text
-  marginTop = 30, // top margin, in pixels
-  marginRight = 0, // right margin, in pixels
-  marginBottom = 30, // bottom margin, in pixels
-  marginLeft = 40, // left margin, in pixels
-  width = 640, // outer width, in pixels
-  height = 400, // outer height, in pixels
-  xDomain, // array of x-values
-  xRange = [marginLeft, width - marginRight], // [left, right]
-  xPadding = 0.1, // amount of x-range to reserve to separate bars
-  yType = d3.scaleLinear, // type of y-scale
-  yDomain, // [ymin, ymax]
-  yRange = [height - marginBottom, marginTop], // [bottom, top]
-  zDomain, // array of z-values
-  offset = d3.stackOffsetDiverging, // stack offset method
-  order = d3.stackOrderNone, // stack order method
-  yFormat, // a format specifier string for the y-axis
-  yLabel, // a label for the y-axis
-  colors = d3.schemeTableau10, // array of colors
-} = {}) {
-  // Compute values.
-  const X = d3.map(data, x);
-  const Y = d3.map(data, y);
-  const Z = d3.map(data, z);
+import './style.css';
+import React, { useState, useRef, useEffect } from 'react';
+import * as d3 from "d3";
 
-  // Compute default x- and z-domains, and unique them.
-  if (xDomain === undefined) xDomain = X;
-  if (zDomain === undefined) zDomain = Z;
-  xDomain = new d3.InternSet(xDomain);
-  zDomain = new d3.InternSet(zDomain);
 
-  // Omit any data not present in the x- and z-domains.
-  const I = d3.range(X.length).filter(i => xDomain.has(X[i]) && zDomain.has(Z[i]));
+const BarChart = (props) => {
 
-  // Compute a nested array of series where each series is [[y1, y2], [y1, y2],
-  // [y1, y2], …] representing the y-extent of each stacked rect. In addition,
-  // each tuple has an i (index) property so that we can refer back to the
-  // original data point (data[i]). This code assumes that there is only one
-  // data point for a given unique x- and z-value.
-  const series = d3.stack()
-      .keys(zDomain)
-      .value(([x, I], z) => Y[I.get(z)])
-      .order(order)
-      .offset(offset)
-    (d3.rollup(I, ([i]) => i, i => X[i], i => Z[i]))
-    .map(s => s.map(d => Object.assign(d, {i: d.data[1].get(s.key)})));
+    const ticks=6; // Ticks on the Y axis
+    const tickWidth=12; // Width of Y axis ticks
+    const marginLeft = 35;
+    const marginRight = 0;
+    const marginBottom = 45;
+    const marginTop = 20;
+    const width = Number(props['width'])-marginLeft-marginRight;
+    const height = Number(props['height'])-marginBottom-marginTop;
+    const xRange = [marginLeft, width, width-marginLeft];
+    const yRange = [marginTop, height, height-marginTop];
+    const yMin = 0;
+    const yMax = 100;
+    
+    const data = [
+        {name:"Mark", value: 90},
+        {name:"Robert", value: 12},
+        {name:"Emily", value: 34},
+        {name:"Marion", value: 53},
+        {name:"Nicolas", value: 98},
+    ]
 
-  // Compute the default y-domain. Note: diverging stacks can be negative.
-  if (yDomain === undefined) yDomain = d3.extent(series.flat(2));
+    const x = d3.scaleBand()
+        .range([ xRange[0], xRange[1] ])
+        .domain(data.map(function(d) { return d.name; }))
+        .padding(0.2);
+    const barWidth = x.bandwidth()
 
-  // Construct scales, axes, and formats.
-  const xScale = d3.scaleBand(xDomain, xRange).paddingInner(xPadding);
-  const yScale = yType(yDomain, yRange);
-  const color = d3.scaleOrdinal(zDomain, colors);
-  const xAxis = d3.axisBottom(xScale).tickSizeOuter(0);
-  const yAxis = d3.axisLeft(yScale).ticks(height / 60, yFormat);
+    const y = d3.scaleLinear()
+        .domain([yMin, yMax])
+        .range([ yRange[1], yRange[0]]);
 
-  // Compute titles.
-  if (title === undefined) {
-    const formatValue = yScale.tickFormat(100, yFormat);
-    title = i => `${X[i]}\n${Z[i]}\n${formatValue(Y[i])}`;
-  } else {
-    const O = d3.map(data, d => d);
-    const T = title;
-    title = i => T(O[i], i, data);
-  }
+    const allRects = data.map((value,i) => {
+        return (
+            <rect
+                key={i}
+                fill='#69b3a2'
+                stroke='black'
+                x={x(value.name)+tickWidth}
+                y={y(value.value)}
+                width={barWidth}
+                height={yRange[1] - y(value.value)}
+            />
+        );
+    });
 
-    const svg = d3.create("svg")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("viewBox", [0, 0, width, height])
-        .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
+    const xAxis = (
+        // draw vertical line
+        <svg>
+            <line
+                x1={xRange[0]+tickWidth}
+                y1={yRange[1]}
+                x2={xRange[1]+tickWidth}
+                y2={yRange[1]}
+                stroke="black"
+                strokeWidth="5"
+            />
+            {data.map((d, i) => {
+                let xpos = x(d.name)+tickWidth+barWidth/2
+                let ypos = yRange[1]+tickWidth
+                return (
+                    <svg>
+                        <text x={xpos} y={ypos} class="small"  textAnchor="end" transform={`translate(-5, 5) rotate(-45, ${xpos}, ${ypos})`}>{d.name}</text>
+                        <line
+                            x1={xpos}
+                            y1={yRange[1]}
+                            x2={xpos}
+                            y2={yRange[1] + tickWidth}
+                            stroke="black"
+                            strokeWidth="2"
+                        />
+                    </svg>
+                )
+            })
+            }
+        </svg>
+    )
 
-  svg.append("g")
-      .attr("transform", `translate(${marginLeft},0)`)
-      .call(yAxis)
-      .call(g => g.select(".domain").remove())
-      .call(g => g.selectAll(".tick line").clone()
-          .attr("x2", width - marginLeft - marginRight)
-          .attr("stroke-opacity", 0.1))
-      .call(g => g.append("text")
-          .attr("x", -marginLeft)
-          .attr("y", 10)
-          .attr("fill", "currentColor")
-          .attr("text-anchor", "start")
-          .text(yLabel));
+    const yAxis = (
+        // draw vertical line
+        <svg>
+            <line
+                x1={xRange[0] + tickWidth}
+                y1={yRange[0]}
+                x2={xRange[0] + tickWidth}
+                y2={yRange[1]}
+                stroke="black"
+                strokeWidth="5"
+            />
+            // draw ticks
+            {Array.from(Array(ticks)).map((d, i) => {
+                return (
+                    <svg>
+                        <text x={marginLeft} y={yRange[0] + (yRange[2]/(ticks-1))*i+4} textAnchor="end" class="small">{Math.round(yMax/(ticks-1)) * (ticks-i-1)}</text>
+                        <line
+                            x1={xRange[0]}
+                            y1={yRange[1] - (yRange[2]/(ticks-1))*i}
+                            x2={xRange[0] + tickWidth}
+                            y2={yRange[1] - (yRange[2]/(ticks-1))*i}
+                            stroke="black"
+                            strokeWidth="2"
+                        />
+                    </svg>
+                )
+            })
+            }
+        </svg>
+    );
 
-  const bar = svg.append("g")
-    .selectAll("g")
-    .data(series)
-    .join("g")
-      .attr("fill", ([{i}]) => color(Z[i]))
-    .selectAll("rect")
-    .data(d => d)
-    .join("rect")
-      .attr("x", ({i}) => xScale(X[i]))
-      .attr("y", ([y1, y2]) => Math.min(yScale(y1), yScale(y2)))
-      .attr("height", ([y1, y2]) => Math.abs(yScale(y1) - yScale(y2)))
-      .attr("width", xScale.bandwidth());
-
-  if (title) bar.append("title")
-      .text(({i}) => title(i));
-
-  svg.append("g")
-      .attr("transform", `translate(0,${yScale(0)})`)
-      .call(xAxis);
-
-  return Object.assign(svg.node(), {scales: {color}});
+    return (
+        <div>
+            <svg width={props['width']} height={props['height']}>
+                {allRects}
+                {xAxis}
+                {yAxis}
+            </svg>
+        </div>
+    );
 }
+export default BarChart;

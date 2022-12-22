@@ -4,8 +4,8 @@ import PieIcon from '../../charts/PieChart/Icon.svg'
 
 const ChartDropdown = () => {
 
-    function handleDragStart(event, chartColor){
-        event.dataTransfer.setData('chartColor', chartColor);
+    function handleDragStart(event, chartType){
+        event.dataTransfer.setData('chartType', chartType);
     }
 
     return (
@@ -15,14 +15,14 @@ const ChartDropdown = () => {
                 src={BarIcon} 
                 alt="Bar Chart"
                 draggable='true'
-                onDragStart={(event) => handleDragStart(event, "#ff0000")}
+                onDragStart={(event) => handleDragStart(event, "BARCHART")}
             />
             <img 
                 className="chart-svg"
                 src={PieIcon} 
                 alt="Pie Chart"
                 draggable='true'
-                onDragStart={(event) => handleDragStart(event, "#000000")}
+                onDragStart={(event) => handleDragStart(event, "PIECHART")}
             />
         </div>
     )

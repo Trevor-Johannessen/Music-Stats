@@ -10,6 +10,11 @@ export const GlobalStoreActionType = {
     TOGGLE_SETTINGS: "TOGGLE_SETTINGS",
 }
 
+export const chartColors = {
+    BARCHART: "#ff0000",
+    PIECHART: "#000000",
+}
+
 
 function GlobalStoreContextProvider(props) {
     // THESE ARE ALL THE THINGS OUR DATA STORE WILL MANAGE

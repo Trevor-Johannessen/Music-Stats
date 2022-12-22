@@ -1,9 +1,10 @@
 import './style.css';
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import Navbar from '../Navbar/Navbar'
 import ChartSpace from '../ChartSpace/ChartSpace'
 import ChartDropdown from '../ChartDropdown/ChartDropdown'
 import ChartSettings from '../PageSettings/PageSettings'
+import BarChart from '../../charts/BarChart/BarChart'
 import { GlobalStoreContext } from '../../store'
 
 const HomeBody = () => {
