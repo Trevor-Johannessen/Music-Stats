@@ -34,22 +34,22 @@ function GlobalDataContextProvider(props) {
         }
     }
 
-    dataRequest.getBarchartData = function(xValue, yValue, filters){
+    dataRequest.setBarchartData = (stateFunction, xValue, yValue, filters) =>{
         console.log("Getting barchart data.");
+        console.log(`xValue = ${xValue}`)
+        console.log(`yValue = ${yValue}`)
         if(!xValue || !yValue)
             return [];
         async function asyncGetData(xValue, yValue, filters){
             console.log(`Query Values = ${xValue}, ${yValue}`);
             console.log(filters)
             const response = await api.getBarchartData(xValue, yValue, filters);
-            return response
+            console.log("Response = ")
+            console.log(response)
+            stateFunction(response.data)
         }
-        return asyncGetData(xValue, yValue, filters)
-        
-    }
-    
-
-
+        asyncGetData(xValue, yValue, filters)
+    } 
 
 
 

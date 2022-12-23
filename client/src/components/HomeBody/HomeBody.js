@@ -12,12 +12,6 @@ const HomeBody = () => {
     const { store } = useContext(GlobalStoreContext);
     const { dataRequest } = useContext(GlobalDataContext);
 
-    let littleButton = async () => {
-        const response = await dataRequest.getBarchartData("albums", "plays", []).then(response => {
-            return response;
-        })
-        console.log(response)
-    }
 
 
     return (
@@ -33,7 +27,7 @@ const HomeBody = () => {
                 <ChartSpace/>
                 <ChartSpace/>
             </div>
-            <button onClick={littleButton}>Press Me!</button>
+            <button onClick={() => dataRequest.getBarchartData("albums", "plays", [])}>Press Me!</button>
         </div>
     )
 }

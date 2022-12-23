@@ -3,6 +3,9 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import { chartColors } from '../../store';
 import BarChart from '../../charts/BarChart/BarChart';
 import { GlobalDataContext } from '../../dataContext'
+import api from '../../dataContext/data-request-api'
+import { breadcrumbsClasses } from '@mui/material';
+
 /*
     ChartSpace:
         This component will hold d3 charts for display
@@ -14,10 +17,11 @@ import { GlobalDataContext } from '../../dataContext'
             -When the dragged object leaves the chartspace, the chartspace shadow will be color coded with the chart it is holding 
 */
 const ChartSpace = (props) => {
-    const [chart, setChart] = useState('');
+    const [chartType, setChartType] = useState('');
     const [shadow, setShadow] = useState(['#e1e2d7', '']); // current and previous colors stored
     const [chartSettings, setChartSettings] = useState({xValue : "", yValue : "", options : []})
-    const { data } = useContext(GlobalDataContext);
+    const [chartData, setChartData] = useState([])
+    const { dataRequest } = useContext(GlobalDataContext);
 
     const ref = useRef(null);
     let width = ref.current ? ref.current.offsetWidth : 0
@@ -43,21 +47,31 @@ const ChartSpace = (props) => {
 
     function handleDrop(event) {
         event.preventDefault();
-        let chartType = event.dataTransfer.getData('chartType');
+        let newChartType = event.dataTransfer.getData('chartType');
         let chartColor = chartColors[chartType];
         
         console.log(`width = ${width}`)
         console.log(`height = ${height}`)
         
-        switch(chartType){
+        setChartType(newChartType);
+        // TODO: Move this to Data Context
+        switch(newChartType){
             case 'BARCHART':
-                let newChart = (<BarChart width={width} height={height} settings={{xValue : "albums", yValue : "plays", options : []}}/>)
-                setChart(newChart)
-                // setChart(<BarChart width={width} height={height} settings={chartSettings}/>)
+                dataRequest.setBarchartData(setChartData, chartSettings.xValue, chartSettings.yValue, chartSettings.options)
                 break;
         }
-        
         setShadow([chartColor, shadow[0]]) // Change this to new chart color later
+    }
+
+    // TODO: need to figure out better way to do this
+    let chart = "";
+    // PLACE CHART
+    switch(chartType){
+        case 'BARCHART':
+            chart = (<BarChart width={width} height={height} data={chartData} settings={{xValue : "albums", yValue : "plays", options : []}}/>)
+            console.log('chart set')
+            // setChart(<BarChart width={width} height={height} settings={chartSettings}/>)
+            break;
     }
 
     return (
@@ -70,6 +84,7 @@ const ChartSpace = (props) => {
             onDrop={handleDrop}
             style={{boxShadow: `-10px 5px 5px ${shadow[0]}`}}
         >
+            <button onClick={() => dataRequest.setBarchartData(setChartData, chartSettings.xValue, chartSettings.yValue, chartSettings.options)}>Refresh</button>
             {chart}
         </div>
     )
