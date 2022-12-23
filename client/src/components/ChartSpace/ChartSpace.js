@@ -47,8 +47,7 @@ const ChartSpace = (props) => {
 
     function handleDbClick(event){
         event.stopPropagation();
-        console.log('double click');
-        if(!settingsOpened)
+        if(!settingsOpened && chartType != 'NONE')
             openSettings(true);
     }
 
@@ -56,10 +55,6 @@ const ChartSpace = (props) => {
         event.preventDefault();
         let newChartType = event.dataTransfer.getData('chartType');
         let chartColor = chartColors[chartType];
-        
-        console.log(`width = ${width}`)
-        console.log(`height = ${height}`)
-        
         setChartType(newChartType);
         // TODO: Move this to Data Context
         setData(newChartType);
@@ -91,8 +86,6 @@ const ChartSpace = (props) => {
     switch(chartType){
         case 'BARCHART':
             chart = (<BarChart width={width} height={height} data={chartData}/>)
-            console.log('chart set')
-            // setChart(<BarChart width={width} height={height} settings={chartSettings}/>)
             break;
     }
 
