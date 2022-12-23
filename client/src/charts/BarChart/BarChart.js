@@ -29,11 +29,6 @@ const BarChart = (props) => {
     const xRange = [marginLeft, width, width - marginLeft];
     const yRange = [marginTop, height, height - marginTop];
     const data = props['data'];
-    const yMin = data.length != 0 ? data.reduce((minimum, current) => minimum > current.y ? current.y : minimum, Infinity) : 0; // not sure why data does not evaluate to false on its own when empty
-    const yMax = data.length != 0 ? data.reduce((maximum, current) => maximum < current.y ? current.y : maximum, -Infinity) : 100;
-    
-    
-    
     // const data = [
     //     {x:"Mark", y: 90},
     //     {x:"Robert", y: 12},
@@ -43,6 +38,8 @@ const BarChart = (props) => {
     // ]
     
     
+    const yMin = data.length != 0 ? data.reduce((minimum, current) => minimum > current.y ? current.y : minimum, Infinity) : 0; // not sure why data does not evaluate to false on its own when empty
+    const yMax = data.length != 0 ? data.reduce((maximum, current) => maximum < current.y ? current.y : maximum, -Infinity) : 100;
 
     const x = d3.scaleBand()
         .range([xRange[0], xRange[1]])
