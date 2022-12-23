@@ -3,6 +3,7 @@ import './style.css';
 import { Select, MenuItem, Box, Button, Typography, FormHelperText, FormControl, Grid, TextField} from '@mui/material';
 
 const handleSubmit = (event, setSettings, type) => {
+    console.log("In handle submit")
     event.preventDefault();
     const formData = new FormData(event.currentTarget)
     switch(type){
@@ -17,7 +18,7 @@ const handleSubmit = (event, setSettings, type) => {
 const barchartSettings = (settings, setSettings, closeSettings) => (
     <div id='barchart-settings'>
         <Typography id='barchart-settings-title' >Barchart Settings:</Typography>
-        <FormControl sx={{width: '100%', height:'100%'}}  onSubmit={(event) => handleSubmit(event, setSettings, 'BARCHART')}>
+        <Box component='form' sx={{width: '100%', height:'100%'}}  onSubmit={(event) => handleSubmit(event, setSettings, 'BARCHART')}>
             <Grid container >
                 <Grid item xs={6}>
                     <Select                                                     // select X axis
@@ -79,8 +80,8 @@ const barchartSettings = (settings, setSettings, closeSettings) => (
                     </Button>
                 </Grid>
             </Grid>
-        </FormControl>
-        <FormControl sx={{width: '100%', height:'100%'}}  onSubmit={(event) => handleSubmit(event, setSettings, 'BARCHART')}>
+        </Box>
+        <Box component='form' sx={{width: '100%', height:'100%'}}  onSubmit={(event) => console.log("Hello world")}>
             <Grid container>
                 <Grid item xs={4}>
                     <Select 
@@ -141,7 +142,7 @@ const barchartSettings = (settings, setSettings, closeSettings) => (
                     </Button>
                 </Grid>
             </Grid>
-        </FormControl>
+        </Box>
     </div>
 );
 
