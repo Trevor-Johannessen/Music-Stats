@@ -45,7 +45,7 @@ def createFilter(cursor, xValue, yValue, filters=[]):
             conjunction = "AND"
         if type == "LIMIT#" or type == "LIMIT%":
             limit = rule
-        elif type == 'artists' or type == 'albums' or type == 'songs':
+        elif type == 'artists' or type == 'albums' or type == 'songs' or type == 'genres':
             conjunction = '' if innerFilter == '' else conjunction
             if comparator == '=':
                 innerFilter += f'{conjunction} {type}.name{equality}\'{value}\''
@@ -125,11 +125,11 @@ def barChart():
     if limit:
         status = limit['status']
         type = limit['type']
-        value = limit['value']
+        value = int(limit['value'])
         if type=="LIMIT#":
             limitingAmount = value
         elif type=="LIMIT%":
-            limitingAmount = round(len(valuesArr) * value)
+            limitingAmount = round(len(valuesArr) * (value/100))
         if status == 'INCLUDES':
             return valuesArr[0:limitingAmount]
         elif status == 'EXCLUDES':

@@ -15,14 +15,16 @@ const handleSubmit = (event, settings, setSettings, type, closeMenu) => {
     const formData = new FormData(event.currentTarget);
     switch(type){
         case 'BARCHART':
-            let options = [...settings.options, {status : formData.get('filterType'), type : formData.get('filterAttribute'), comparator : formData.get('filterOperation'), value : formData.get('filterValue')}];
             let settingsDict = {};
-            console.log(formData.get('xSelector'));
-            console.log(options);
-            if(formData.get('xSelector'))
-                settingsDict = {xValue : formData.get('xSelector'), yValue : formData.get('ySelector'), options : settings.options}
-            else
+            let options = [...settings.options]
+            if(formData.get('xSelector')){
+                if (formData.get('quantifierType') != 'None') 
+                    options = [...options, {status : formData.get('quantifierInclusion'), type : formData.get('quantifierType'), comparator : '', value : formData.get('quantifierValue')}];
+                settingsDict = {xValue : formData.get('xSelector'), yValue : formData.get('ySelector'), options : options}
+            }else{
+                let options = [...settings.options, {status : formData.get('filterType'), type : formData.get('filterAttribute'), comparator : formData.get('filterOperation'), value : formData.get('filterValue')}];
                 settingsDict = {xValue : settings.xValue, yValue : settings.yValue, options : options}
+            }
             setSettings(settingsDict, closeMenu);
             break;
     }
@@ -43,6 +45,7 @@ const barchartSettings = (settings, setSettings) => (
                     >
                         <MenuItem value='artists'>Artist</MenuItem>
                         <MenuItem value='albums'>Album</MenuItem>
+                        <MenuItem value='songs'>Song</MenuItem>
                         <MenuItem value='genres'>Genre</MenuItem>
                     </Select>
                         <FormHelperText>X-Axis</FormHelperText>
@@ -62,27 +65,37 @@ const barchartSettings = (settings, setSettings) => (
                     </Select>
                         <FormHelperText>Y-Axis</FormHelperText>
                 </Grid>
-                
-                <Grid item xs={4}>
+                <Grid item xs={5}>
+                    <Select
+                        name="quantifierInclusion"
+                        xs={{width: '100%'}}
+                        defaultValue='INCLUDES'
+                        style={{minWidth : '100%'}} // I have no idea why it won't spread otherwise and 1 minute of google did not solve my issue
+                    >
+                        <MenuItem value='INCLUDES'>Include</MenuItem>
+                        <MenuItem value='EXCLUDES'>Exclude</MenuItem>
+                    </Select>
+                    <FormHelperText>Include/Exclude</FormHelperText>
+                </Grid>
+                <Grid item xs={2}>
                     <Select
                         name="quantifierType"
                         xs={{width: '100%'}}
                         defaultValue='none'
                     >
                         <MenuItem value='none'>None</MenuItem>
-                        <MenuItem value='absolute'>Top #</MenuItem>
-                        <MenuItem value='precentage'>Top %</MenuItem>
+                        <MenuItem value='LIMIT#'>Top #</MenuItem>
+                        <MenuItem value='LIMIT%'>Top %</MenuItem>
                     </Select>
                     <FormHelperText>Quantity Type</FormHelperText>
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={5}>
                     <TextField
                         name="quantifierValue"
                         type="number"
                         xs={{width: '100%'}}
                         label="Quantity"
                     >
-
                     </TextField>
                 </Grid>
                 <Grid item xs={3}>
@@ -130,11 +143,11 @@ const barchartSettings = (settings, setSettings) => (
                         name="filterOperation"
                     >
                         <MenuItem value='contains'>Contains</MenuItem>
-                        <MenuItem value='albums'>{'>'}</MenuItem>
-                        <MenuItem value='genres'>{'>='}</MenuItem>
-                        <MenuItem value='plays'>{'='}</MenuItem>
-                        <MenuItem value='skips'>{'<='}</MenuItem>
-                        <MenuItem value='skips'>{'<'}</MenuItem>
+                        <MenuItem value='>'>{'>'}</MenuItem>
+                        <MenuItem value='>='>{'>='}</MenuItem>
+                        <MenuItem value='='>{'='}</MenuItem>
+                        <MenuItem value='<='>{'<='}</MenuItem>
+                        <MenuItem value='<'>{'<'}</MenuItem>
                     </Select>
                     <FormHelperText>Attribute</FormHelperText>
                 </Grid>

@@ -38,7 +38,8 @@ const BarChart = (props) => {
     // ]
     
     
-    const yMin = data.length != 0 ? data.reduce((minimum, current) => minimum > current.y ? current.y : minimum, Infinity) : 0; // not sure why data does not evaluate to false on its own when empty
+    //const yMin = data.length != 0 ? data.reduce((minimum, current) => minimum > current.y ? current.y : minimum, Infinity) : 0; // not sure why data does not evaluate to false on its own when empty
+    const yMin = 0;
     const yMax = data.length != 0 ? data.reduce((maximum, current) => maximum < current.y ? current.y : maximum, -Infinity) : 100;
 
     const x = d3.scaleBand()
@@ -64,6 +65,8 @@ const BarChart = (props) => {
             />
         );
     });
+    console.log("All rects = ");
+    console.log(allRects);
 
     const xAxis = (
         // draw vertical line
