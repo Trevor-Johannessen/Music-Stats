@@ -17,19 +17,22 @@ mycursor = db.cursor()
 print("Initalizing Tables")
 sqlConnector.initalizeTables(mycursor)
 
-# Parse iTunes data
-print("Parsing iTunes Data")
+# Add iTunes data
+print("Add iTunes Data")
 parsecsv.parseITunesData(mycursor)
 
-# Parse songStats data
-print("Parsing Song Stats Data")
+# Add songStats data
+print("Addings Song Stats Data")
 parsecsv.handleSongStatsData(mycursor)
 
 # Set new last update
 print("Marking Update Time")
 sqlConnector.createNewUpdate(mycursor, datetime.now().strftime("%Y/%m/%d %H:%M:%S")) # current datetime
 
+print("Closing Connections")
 # close connections
 db.commit()
 mycursor.close()
 db.close()
+
+print("Done")

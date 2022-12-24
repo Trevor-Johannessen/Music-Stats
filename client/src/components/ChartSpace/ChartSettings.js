@@ -106,7 +106,6 @@ const barchartSettings = (settings, setSettings, closeSettings) => (
                         <MenuItem value='genres'>Genre</MenuItem>
                         <MenuItem value='plays'>Plays</MenuItem>
                         <MenuItem value='skips'>Skips</MenuItem>
-                        <MenuItem value='length'>Length</MenuItem>
                         <MenuItem value='count'>Count</MenuItem>
                     </Select>
                     <FormHelperText>Attribute</FormHelperText>

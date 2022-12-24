@@ -16,8 +16,6 @@ const HomeBody = () => {
 
     return (
         <div id='homebody'>
-            {store.dropdownEnabled ? <ChartDropdown/> : ''}
-            {store.settingsEnabled ? <ChartSettings/> : ''}
             <Navbar/>
             <div id='chart-area'>
                 <ChartSpace/>
@@ -28,6 +26,8 @@ const HomeBody = () => {
                 <ChartSpace/>
             </div>
             <button onClick={() => dataRequest.getBarchartData("albums", "plays", [])}>Press Me!</button>
+            {store.dropdownEnabled ? <ChartDropdown/> : ''}
+            {store.settingsEnabled ? <ChartSettings/> : ''}
         </div>
     )
 }

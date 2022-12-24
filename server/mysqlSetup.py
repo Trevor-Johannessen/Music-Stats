@@ -32,7 +32,7 @@ def initalizeTables(mycursor):
     # song array format: [songPrimaryKey, title, artistPrimaryKey, albumPrimaryKey, genre, length, dateReleased, dateAdded]
     mycursor.execute("""CREATE TABLE IF NOT EXISTS songs(
         id INT AUTO_INCREMENT,
-        title VARCHAR(255),
+        name VARCHAR(255) collate utf8_bin,
         artist INT,
         album INT,
         genre INT,
@@ -105,13 +105,13 @@ def createNewUpdate(cursor, newDatetime):
 # ADD SONG TO songs TABLE
 def addSong(cursor, title, artistId, albumId, genreId, length, date_released, date_added):
     cursor.execute(f"""INSERT INTO songs
-    (title, artist, album, genre, length, date_released, date_added)
+    (name, artist, album, genre, length, date_released, date_added)
     VALUES
     ('{title}', {artistId}, {albumId}, {genreId}, '0:{length}', {date_released}, {date_added})
     """)
 
 def getSong(cursor, title, artistId, albumId):
-    searchString = f"SELECT id FROM songs WHERE title = '{title}'"
+    searchString = f"SELECT id FROM songs WHERE name = '{title}'"
 
     if artistId:
         searchString+= f" AND artist = {artistId}"
@@ -128,7 +128,7 @@ def getSongByString(cursor, title, artist, album):
     FROM songs 
     WHERE album IN (SELECT id FROM albums WHERE name = '{album}')
     AND artist IN (SELECT id FROM artists WHERE name = '{artist}')
-    AND title = '{title}'
+    AND name = '{title}'
     """)
     result = cursor.fetchall()
     #print(f"Result of {title} by {artist} on {album} = ")
