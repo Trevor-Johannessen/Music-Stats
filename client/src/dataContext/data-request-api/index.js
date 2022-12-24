@@ -12,11 +12,14 @@ const api = axios.create({
 // CUSTOM FILTERS FOR QUERIES
 
 export const getBarchartData = (x, y, filters) => {
-    return api.put(`/bar-chart/`, {
+    let bodyDict = {
         xValue: x,
         yValue: y,
         filters: filters
-    })
+    }
+    console.log('Sending Barchart Request')
+    console.log(bodyDict)
+    return api.put(`/bar-chart/`, bodyDict)
 }
 
 const apis = {

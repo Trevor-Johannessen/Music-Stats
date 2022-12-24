@@ -27,12 +27,13 @@ valueTable = {
 def createFilter(cursor, xValue, yValue, filters=[]):
     innerFilter=''
     outerFilter=''
-    limiter = ''
+    limit = ''
     
     for rule in filters:
         status = rule['status']
         type = rule['type']
         value = rule['value']
+        comparator = rule['comparator']
         conjunction = ''
         equality = ''
 
@@ -43,10 +44,13 @@ def createFilter(cursor, xValue, yValue, filters=[]):
             equality = '!='
             conjunction = "AND"
         if type == "LIMIT#" or type == "LIMIT%":
-            limiter = rule
+            limit = rule
         elif type == 'artists' or type == 'albums' or type == 'songs':
             conjunction = '' if innerFilter == '' else conjunction
-            innerFilter += f'{conjunction} {type}.name{equality}\'{value}\''
+            if comparator == '=':
+                innerFilter += f'{conjunction} {type}.name{equality}\'{value}\''
+            elif comparator == 'contains':
+                innerFilter += f'{conjunction} locate(\'{value}\',{type}.name) > 0'
         elif type == yValue:
             conjunction = '' if outerFilter == '' else conjunction
             outerFilter += f'{conjunction} unique_item {rule["comparator"]} {value}'
@@ -64,7 +68,7 @@ def createFilter(cursor, xValue, yValue, filters=[]):
         outerFilter = f'WHERE {outerFilter}'
 
 
-    return innerFilter,outerFilter,limiter
+    return innerFilter,outerFilter,limit
 
 def createQuery(cursor, xValue, yValue,filters=[]):
     selector = '*'
@@ -100,21 +104,24 @@ def createQuery(cursor, xValue, yValue,filters=[]):
 
 @app.route("/api/bar-chart/", methods=['PUT'])
 def barChart():
+    # Get and Decode Data
     if(request.data == b''):
         return Response("Empty payload", status=400, mimetype='text/html')
     print(request.data)
     body = json.loads(request.data.decode('UTF-8'))
+
+    # Create the trigger SQL query
     query, limit = createQuery(mycursor, body['xValue'], body['yValue'], filters=body['filters'])
-    print('query =')
     print(query)
-    print('limit = ')
-    print(limit)
     mycursor.execute(query)
     result = mycursor.fetchall()
+
+    # Turn into array form for barchart
     valuesArr = []
     for var in result:
         valuesArr.append({'x':var[0], 'y':var[1]})
 
+    # Filter to the correct amount of return items
     if limit:
         status = limit['status']
         type = limit['type']

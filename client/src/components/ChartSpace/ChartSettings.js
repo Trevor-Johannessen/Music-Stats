@@ -2,23 +2,36 @@
 import './style.css';
 import { Select, MenuItem, Box, Button, Typography, FormHelperText, FormControl, Grid, TextField} from '@mui/material';
 
-const handleSubmit = (event, setSettings, type) => {
+/*
+    TODO:
+        -Try and restructure reduce overhead for adding new charts
+        -Play with how the filtering works and see what options to hide
+        -Add way to remove rules
+*/
+
+const handleSubmit = (event, settings, setSettings, type, closeMenu) => {
     console.log("In handle submit")
     event.preventDefault();
-    const formData = new FormData(event.currentTarget)
+    const formData = new FormData(event.currentTarget);
     switch(type){
         case 'BARCHART':
-            let options = [];
-            let settingsDict = {xValue : formData.get('xSelector'), yValue : formData.get('ySelector'), options : options}
-            setSettings(settingsDict);
+            let options = [...settings.options, {status : formData.get('filterType'), type : formData.get('filterAttribute'), comparator : formData.get('filterOperation'), value : formData.get('filterValue')}];
+            let settingsDict = {};
+            console.log(formData.get('xSelector'));
+            console.log(options);
+            if(formData.get('xSelector'))
+                settingsDict = {xValue : formData.get('xSelector'), yValue : formData.get('ySelector'), options : settings.options}
+            else
+                settingsDict = {xValue : settings.xValue, yValue : settings.yValue, options : options}
+            setSettings(settingsDict, closeMenu);
             break;
     }
 }
 
-const barchartSettings = (settings, setSettings, closeSettings) => (
+const barchartSettings = (settings, setSettings) => (
     <div id='barchart-settings'>
         <Typography id='barchart-settings-title' >Barchart Settings:</Typography>
-        <Box component='form' sx={{width: '100%', height:'100%'}}  onSubmit={(event) => handleSubmit(event, setSettings, 'BARCHART')}>
+        <Box component='form' sx={{width: '100%', height:'100%'}}  onSubmit={(event) => handleSubmit(event, settings, setSettings, 'BARCHART', true)}>
             <Grid container >
                 <Grid item xs={6}>
                     <Select                                                     // select X axis
@@ -81,7 +94,7 @@ const barchartSettings = (settings, setSettings, closeSettings) => (
                 </Grid>
             </Grid>
         </Box>
-        <Box component='form' sx={{width: '100%', height:'100%'}}  onSubmit={(event) => console.log("Hello world")}>
+        <Box component='form' sx={{width: '100%', height:'100%'}}  onSubmit={(event) => handleSubmit(event, settings, setSettings, 'BARCHART', false)}>
             <Grid container>
                 <Grid item xs={4}>
                     <Select 
@@ -113,10 +126,10 @@ const barchartSettings = (settings, setSettings, closeSettings) => (
                 <Grid item xs={4}>
                     <Select
                         sx={{width: '100%', height: '50%'}}
-                        defaultValue='artists'
+                        defaultValue='contains'
                         name="filterOperation"
                     >
-                        <MenuItem value='artists'>Contains</MenuItem>
+                        <MenuItem value='contains'>Contains</MenuItem>
                         <MenuItem value='albums'>{'>'}</MenuItem>
                         <MenuItem value='genres'>{'>='}</MenuItem>
                         <MenuItem value='plays'>{'='}</MenuItem>

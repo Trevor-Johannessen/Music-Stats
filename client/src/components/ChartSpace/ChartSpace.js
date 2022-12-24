@@ -72,9 +72,10 @@ const ChartSpace = (props) => {
         }
     }
 
-    function submitSettings(newSettings){
+    function submitSettings(newSettings, close){
         setChartSettings(newSettings);
-        openSettings(false);
+        if(close)
+            openSettings(false);
         setData(chartType, newSettings);
         
     }
