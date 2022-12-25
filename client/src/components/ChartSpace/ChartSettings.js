@@ -30,7 +30,25 @@ const handleSubmit = (event, settings, setSettings, type, closeMenu) => {
     }
 }
 
-const barchartSettings = (settings, setSettings) => (
+export function getEditMenu(settings, setEdit, setSettings) {
+    
+    const newSettings = settings;
+
+
+    return (
+        <div id='edit-rules'>
+            <Box sx={{width: '100%', height:'100%'}}>
+                <Button
+                    onClick={() => {setSettings(newSettings, true); setEdit(false)}}
+                >
+                    DONE
+                </Button>
+            </Box>
+        </div>
+    )
+}
+
+const barchartSettings = (settings, editRules, setSettings) => (
     <div id='barchart-settings'>
         <Typography id='barchart-settings-title' >Barchart Settings:</Typography>
         <Box component='form' sx={{width: '100%', height:'100%'}}  onSubmit={(event) => handleSubmit(event, settings, setSettings, 'BARCHART', true)}>
@@ -159,11 +177,18 @@ const barchartSettings = (settings, setSettings) => (
                     >
                         </TextField>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={2}>
                     <Button
                         type='submit'
                     >
                         ADD RULE
+                    </Button>
+                </Grid>
+                <Grid item xs={2}>
+                    <Button
+                        onClick={() => editRules(true)}
+                    >
+                        EDIT RULES
                     </Button>
                 </Grid>
             </Grid>
@@ -177,10 +202,10 @@ const defaultSettings = (
     </div>
 )
 
-export function getSettingsMenu(type, settings, setSettings){
+export function getSettingsMenu(type, settings, editRules, setSettings){
     switch(type){
         case 'BARCHART':
-            return barchartSettings(settings, setSettings);
+            return barchartSettings(settings, editRules, setSettings);
         case 'NONE':
             return defaultSettings;
     }

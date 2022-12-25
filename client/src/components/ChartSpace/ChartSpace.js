@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import { chartColors } from '../../store';
 import BarChart from '../../charts/BarChart/BarChart';
 import { GlobalDataContext } from '../../dataContext'
-import { getSettingsMenu } from './ChartSettings';
+import { getSettingsMenu, getEditMenu } from './ChartSettings';
 
 /*
     ChartSpace:
@@ -21,6 +21,7 @@ const ChartSpace = (props) => {
     const [chartSettings, setChartSettings] = useState({xValue : 'genres', yValue: 'length', options: []})
     const [chartData, setChartData] = useState([]);
     const [settingsOpened, openSettings] = useState(false);
+    const [editRulesOpened, openEditRules] = useState(false);
     const { dataRequest } = useContext(GlobalDataContext);
 
     const ref = useRef(null);
@@ -82,7 +83,8 @@ const ChartSpace = (props) => {
 
     // TODO: need to figure out better way to do this
     let chart = "";
-    let settingsMenu = getSettingsMenu(chartType, chartSettings, submitSettings);
+    let settingsMenu = getSettingsMenu(chartType, chartSettings, openEditRules, submitSettings);
+    let editRulesMenu = getEditMenu(chartSettings, openEditRules, setChartSettings)
     // PLACE CHART
     switch(chartType){
         case 'BARCHART':
@@ -101,7 +103,7 @@ const ChartSpace = (props) => {
             onDoubleClick={handleDbClick}
             style={{boxShadow: `-10px 5px 5px ${shadow[0]}`}}
         >
-            {settingsOpened ? settingsMenu : (<div><button onClick={() => setData('BARCHART')}>Refresh</button>{chart}</div>)}
+            {settingsOpened ? editRulesOpened ? editRulesMenu : settingsMenu : (<div><button onClick={() => setData('BARCHART')}>Refresh</button>{chart}</div>)}
             {/* {settingsOpened ? settingsMenu : chart} */}
         </div>
     )
